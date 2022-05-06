@@ -21,10 +21,22 @@ namespace RESTAPIClient
         {
             RestClient restClient = new RestClient();
             restClient.endPoint = txtUrl.Text;
+            restClient.authTech = Enums.AuthenticationTechnique.authenticationTechnique.RollYourOwn;
+            restClient.authType = Enums.AuthenticationType.authenticationType.Basic;
+            restClient.username = txtUsername.Text;
+            restClient.password = txtPassword.Text;
+
             debugOutput("Client object has been created");
-            JToken jToken =JToken.Parse(restClient.MakeRequest());
-            var response = jToken.ToString(Newtonsoft.Json.Formatting.Indented);
-            debugOutput(response);
+            try
+            {
+                JToken jToken = JToken.Parse(restClient.MakeRequest());
+                var response = jToken.ToString(Newtonsoft.Json.Formatting.Indented);
+                debugOutput(response);
+            }
+            catch (Exception ex)
+            {
+                //TODO add logger
+            }
         }
 
         private void debugOutput(string debugText)
@@ -40,6 +52,16 @@ namespace RESTAPIClient
             {
                 System.Diagnostics.Debug.WriteLine(Environment.NewLine + ex.Message);
             }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtResponse.Clear();
         }
     }
 }

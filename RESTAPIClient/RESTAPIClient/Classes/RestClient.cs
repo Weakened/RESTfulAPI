@@ -4,6 +4,8 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using static RESTAPIClient.Enums.Crud;
+using static RESTAPIClient.Enums.AuthenticationType;
+using static RESTAPIClient.Enums.AuthenticationTechnique;
 
 namespace RESTAPIClient.Classes
 {
@@ -14,6 +16,10 @@ namespace RESTAPIClient.Classes
     {
         public string endPoint { get; set; }
         public httpVerb httpMethod { get; set; }
+        public authenticationType authType { get; set; }
+        public authenticationTechnique authTech { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
 
         public RestClient()
         { 
@@ -23,10 +29,17 @@ namespace RESTAPIClient.Classes
         public string MakeRequest()
         {
             string result = string.Empty;
+            
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(endPoint);
             request.Method = httpMethod.ToString();
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            //Add username and password to header for basic authentication
+            string authHeader = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{username}:{password}"));
+            request.Headers.Add("Authorization", $"{authType} {authHeader}");
+
+            HttpWebResponse response = null;
+            try
             {
+                response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     throw new ApplicationException($"Request failed {response.StatusCode}");
@@ -41,6 +54,17 @@ namespace RESTAPIClient.Classes
                             result = reader.ReadToEnd();
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = $"Reques failed {ex.Message}";
+            }
+            finally 
+            {
+                if (response != null)
+                {
+                    ((IDisposable)response).Dispose();
                 }
             }
             return result;
