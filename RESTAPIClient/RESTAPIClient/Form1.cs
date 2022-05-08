@@ -21,8 +21,20 @@ namespace RESTAPIClient
         {
             RestClient restClient = new RestClient();
             restClient.endPoint = txtUrl.Text;
-            restClient.authTech = Enums.AuthenticationTechnique.authenticationTechnique.RollYourOwn;
-            restClient.authType = Enums.AuthenticationType.authenticationType.Basic;
+            if (rbnRYO.Checked)
+            {
+                restClient.authTech = Enums.AuthenticationTechnique.authenticationTechnique.RollYourOwn;
+                debugOutput("AuthTechnique: Roll Your Own");
+                debugOutput("AuthType: Basic");
+            }
+            else 
+            {
+                restClient.authTech = Enums.AuthenticationTechnique.authenticationTechnique.NetworkCredentials;
+                debugOutput("AuthTechnique: Network Credentials");
+                debugOutput("AuthType: ??? - Netcred decides");
+            }
+            //restClient.authTech = Enums.AuthenticationTechnique.authenticationTechnique.RollYourOwn;
+            //restClient.authType = Enums.AuthenticationType.authenticationType.Basic;
             restClient.username = txtUsername.Text;
             restClient.password = txtPassword.Text;
 

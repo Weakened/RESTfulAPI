@@ -20,7 +20,7 @@ namespace RESTAPIClient.Classes
         public authenticationTechnique authTech { get; set; }
         public string username { get; set; }
         public string password { get; set; }
-
+         
         public RestClient()
         { 
             endPoint = string.Empty;
@@ -33,8 +33,18 @@ namespace RESTAPIClient.Classes
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(endPoint);
             request.Method = httpMethod.ToString();
             //Add username and password to header for basic authentication
-            string authHeader = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{username}:{password}"));
-            request.Headers.Add("Authorization", $"{authType} {authHeader}");
+            if (authTech == authenticationTechnique.RollYourOwn)
+            {
+                string authHeader = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes($"{username}:{password}"));
+                request.Headers.Add("Authorization", $"Basic {authHeader}");
+
+            }
+            else 
+            {
+                NetworkCredential netCred = new NetworkCredential(username, password);
+                request.Credentials = netCred;
+            }
+            
 
             HttpWebResponse response = null;
             try

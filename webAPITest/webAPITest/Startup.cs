@@ -27,6 +27,10 @@ namespace webAPITest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
+            });
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
         }
 
@@ -37,7 +41,7 @@ namespace webAPITest
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
